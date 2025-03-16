@@ -17,19 +17,20 @@ def rotate_bound(image, angle):
     return imutils.rotate_bound(image, angle)
 
 
-def display_images(original, transformed, title="Obraz po rotacji"):
-    cv2.imshow("Oryginalny", original)
+def display_images(original, transformed, title="Image after rotate"):
+    cv2.imshow("Original", original)
     cv2.imshow(title, transformed)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
-
 image = cv2.imread("maxwell.jpg")
+
 
 def zad_1():
     rotated_45 = rotate_image(image, 45)
     display_images(image, rotated_45, "45 degree rotate")
+
 
 def zad_2():
     rotated_neg_90 = rotate_image(image, -90)
@@ -52,7 +53,6 @@ def zad_5():
     display_images(image, rotated_180, "180 degree rotate - using imutils")
 
 
-
 def zad_6():
     rotated_bound = rotate_bound(image, -33)
     display_images(image, rotated_bound, "-33 degree rotate - without cutting edges")
@@ -67,7 +67,8 @@ def zad_7():
 def zad_8():
     sequential_rotation = rotate_image(rotate_image(rotate_image(image, 30), 30), 30)
     rotated_90 = rotate_image(image, 90)
-    display_images(sequential_rotation, rotated_90, "Obrót sekwencyjny vs 90 stopni")
+    display_images(sequential_rotation, rotated_90, "3 x 30 degree sequence rotate vs 90 degree rotate")
+
 
 def zad_9():
     rotated_75 = rotate_image(image, 75)
@@ -86,4 +87,3 @@ def zad_10():
 if __name__ == "__main__":
     zad_10()
     cv2.destroyAllWindows()
-
