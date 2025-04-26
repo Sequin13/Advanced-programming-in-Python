@@ -1,50 +1,31 @@
-# import the necessary packages
-import numpy as np
 import cv2
+import numpy as np
 
-triangle = np.zeros((300, 300), dtype="uint8")
+image = cv2.imread('dir_pics/hum.jpg')
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+mask = np.ones(image.shape[:2], dtype="uint8") * 255
 
-points = np.array([[150, 25], [50, 275], [250, 275]])
+for (x, y, w, h) in faces:
+    centerX, centerY = x + w // 2, y + h // 2
+    radius = min(w, h) // 2
 
-cv2.fillPoly(triangle, [points], 255)
-cv2.imshow("Triangle", triangle)
+    cv2.circle(mask, (centerX, centerY), radius, 0, -1)
 
-circle = np.zeros((300, 300), dtype="uint8")
-cv2.circle(circle, (150, 150), 150, 255, -1)
-cv2.imshow("Circle", circle)
+masked_without_face = cv2.bitwise_and(image, image, mask=mask)
 
-bitwiseAnd = cv2.bitwise_and(triangle, circle)
-cv2.imshow("AND", bitwiseAnd)
+face_mask = np.zeros(image.shape[:2], dtype="uint8")
+for (x, y, w, h) in faces:
+    centerX, centerY = x + w // 2, y + h // 2
+    radius = min(w, h) // 2
+    cv2.circle(face_mask, (centerX, centerY), radius, 255, -1)
+
+masked_face_only = cv2.bitwise_and(image, image, mask=face_mask)
+
+# g. Wyświetlanie wyników
+cv2.imshow("Origimnal", image)
+cv2.imshow("Without face", masked_without_face)
+cv2.imshow("Just face", masked_face_only)
 cv2.waitKey(0)
-
-bitwiseOr = cv2.bitwise_or(triangle, circle)
-cv2.imshow("OR", bitwiseOr)
-cv2.waitKey(0)
-
-bitwiseXor = cv2.bitwise_xor(triangle, circle)
-cv2.imshow("XOR", bitwiseXor)
-cv2.waitKey(0)
-
-bitwiseNot = cv2.bitwise_not(triangle)
-cv2.imshow("NOT Triangle", bitwiseNot)
-cv2.waitKey(0)
-
-points_shifted = np.array([[150+50, 25+30], [50+50, 275+30], [250+50, 275+30]])
-
-triangle_shifted = np.zeros((300, 300), dtype="uint8")
-cv2.fillPoly(triangle_shifted, [points_shifted], 255)
-cv2.imshow("Shifted Triangle", triangle_shifted)
-
-bitwiseAnd_shifted = cv2.bitwise_and(triangle_shifted, circle)
-cv2.imshow("AND with Shifted Triangle", bitwiseAnd_shifted)
-cv2.waitKey(0)
-
-bitwiseOr_shifted = cv2.bitwise_or(triangle_shifted, circle)
-cv2.imshow("OR with Shifted Triangle", bitwiseOr_shifted)
-cv2.waitKey(0)
-
-bitwiseXor_shifted = cv2.bitwise_xor(triangle_shifted, circle)
-cv2.imshow("XOR with Shifted Triangle", bitwiseXor_shifted)
-cv2.waitKey(0)
-
 cv2.destroyAllWindows()
